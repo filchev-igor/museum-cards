@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef} from 'react';
 import {
-    AuthorContext, DateContext, HideContext, CardRefContext, DefaultImageLinkContext
+    CardRefContext, DefaultImageLinkContext
 } from "./settings-contexts";
 
 let CardText = (props) => {
@@ -23,9 +23,6 @@ let CardText = (props) => {
 };
 
 let Card = (props) => {
-    const authorContext = useContext(AuthorContext);
-    const dateContext = useContext(DateContext);
-    const hideContext = useContext(HideContext);
     const {ref, setRef} = useContext(CardRefContext);
     const defaultImageLink = useContext(DefaultImageLinkContext);
 
@@ -54,11 +51,9 @@ let Card = (props) => {
     else if (description !== '')
         text = <CardText text={ description } />;
 
-    let artistName = artist['name'];
+    let cardTextTop = artist['name'];
 
-    let cardTextTop = artistName;
-
-    if (typeof artistName === "undefined")
+    if (typeof artist['name'] === "undefined")
         cardTextTop = 'Unknown artist';
 
     let artistBirthDate = artist['birth_date'];
