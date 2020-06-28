@@ -1,35 +1,35 @@
 import React, {useContext} from "react";
-import {AuthorContext, DateContext, HideContext} from "./settings-contexts";
+import {AuthorSettingContext, DateSettingContext, HideSettingContext} from "./settings-contexts";
 
 let SettingsList = () => {
-    const {author, setAuthor} = useContext(AuthorContext);
-    const {date, setDate} = useContext(DateContext);
-    const {hide, setHide} = useContext(HideContext);
+    const {authorSetting, setAuthorSetting} = useContext(AuthorSettingContext);
+    const {dateSetting, setDateSetting} = useContext(DateSettingContext);
+    const {hideSetting, setHideSetting} = useContext(HideSettingContext);
 
     let settingsOptions = [
         {
             option: "Sort by author name",
             value: {
                 list: ["ascending", "descending"],
-                current: author
+                current: authorSetting
             },
-            clickFunction: setAuthor
+            clickFunction: setAuthorSetting
         },
         {
             option: "Sort by date",
             value: {
                 list: ["ascending", "descending"],
-                current: date
+                current: dateSetting
             },
-            clickFunction: setDate
+            clickFunction: setDateSetting
         },
         {
             option: "Hide cards without",
             value: {
                 list: ["description", "date", "authors name"],
-                current: hide
+                current: hideSetting
             },
-            clickFunction: setHide
+            clickFunction: setHideSetting
         }
     ];
 
@@ -64,10 +64,7 @@ let SettingsList = () => {
             );
         });
 
-        let divClassName = "row row-cols-1 row-cols-md-4";
-
-        if (objectIndex < array.length - 1)
-            divClassName += " mb-3";
+        let divClassName = "row row-cols-1 row-cols-md-4 mb-3";
 
         return <div className={ divClassName } key={ objectIndex }>
             <div className="col">{ object['option'] }</div>

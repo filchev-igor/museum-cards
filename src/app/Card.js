@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {
-    CardRefContext, DefaultImageLinkContext
-} from "./settings-contexts";
+import {CardRefContext, DefaultImageLinkContext} from "./settings-contexts";
+import PersonIcon from '@material-ui/icons/Person';
 
 let CardText = (props) => {
     let {
@@ -86,10 +85,8 @@ let Card = (props) => {
                             <span>{ cardTextTop }</span>
                         </div>
 
-                        <div className='col-1 m-0 p-0'>
-                            <span className="text-right oi oi-person">
-
-                            </span>
+                        <div className='col-2'>
+                            <PersonIcon />
                         </div>
                     </div>
                 </div>
