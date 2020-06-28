@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Cards from "./Cards";
+import SettingsWindow from "./settings-window";
+import "./App.css";
+import {
+    AuthorContext, DateContext, HideContext, CardRefContext, DefaultImageLinkContext
+} from "./settings-contexts";
 
 let App = () => {
     const [data, setData] = useState([]);
     const [ref, setRef] = useState([]);
+    const [author, setAuthor] = useState(null);
+    const [date, setDate] = useState(null);
+    const [hide, setHide] = useState(null);
 
     const defaultImageLink = 'https://js.cx/lazyimg/1.gif';
-
-    let setCardRef = (reference) => {
-        let referenceArray = ref;
-        referenceArray.push(reference.current);
-
-        setRef(referenceArray);
-    };
 
     useEffect(() => {
         let data = async () => {
@@ -108,24 +109,62 @@ let App = () => {
 
             setRef(reference);
 
-            if (!reference.length)
+            if (!reference.length) {
                 window.removeEventListener("scroll", lazyLoad);
+                window.removeEventListener("resize", lazyLoad);
+            }
         };
 
         lazyLoad();
         window.addEventListener("scroll", lazyLoad);
+        window.addEventListener("resize", lazyLoad);
 
         return () => {
             window.removeEventListener("scroll", lazyLoad);
+            window.removeEventListener("resize", lazyLoad);
         };
     });
 
+    const SettingsProvider = (props) => {
+        return <>
+            <AuthorContext.Provider value={{author, setAuthor}}>
+                <DateContext.Provider value={{date, setDate}}>
+                    <HideContext.Provider value={{hide, setHide}}>
+                        { props.children }
+                    </HideContext.Provider>
+                </DateContext.Provider>
+            </AuthorContext.Provider>
+        </>
+    };
+
+    const CardsProvider = (props) => {
+        return <>
+            <AuthorContext.Provider value={{author}}>
+                <DateContext.Provider value={{date}}>
+                    <HideContext.Provider value={{hide}}>
+                        <CardRefContext.Provider value={{ref, setRef}}>
+                            <DefaultImageLinkContext.Provider value={defaultImageLink}>
+                                { props.children }
+                            </DefaultImageLinkContext.Provider>
+                        </CardRefContext.Provider>
+                    </HideContext.Provider>
+                </DateContext.Provider>
+            </AuthorContext.Provider>
+        </>
+    };
+
     return (
-        <Cards
-            onSetCardRef={ setCardRef }
-            defaultImageLink={ defaultImageLink }
-            data={ data }
-        />
+        <div className="container">
+            <SettingsProvider>
+                <SettingsWindow />
+            </SettingsProvider>
+
+            <CardsProvider>
+                <Cards
+                    data={ data }
+                />
+            </CardsProvider>
+        </div>
     );
 };
 

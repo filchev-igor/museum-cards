@@ -1,4 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
+import {
+    AuthorContext, DateContext, HideContext, CardRefContext, DefaultImageLinkContext
+} from "./settings-contexts";
 
 let CardText = (props) => {
     let {
@@ -20,9 +23,13 @@ let CardText = (props) => {
 };
 
 let Card = (props) => {
-    const imageRef = useRef(null);
+    const authorContext = useContext(AuthorContext);
+    const dateContext = useContext(DateContext);
+    const hideContext = useContext(HideContext);
+    const {ref, setRef} = useContext(CardRefContext);
+    const defaultImageLink = useContext(DefaultImageLinkContext);
 
-    const { defaultImageLink } = props;
+    const imageRef = useRef(null);
 
     const {
         artist,
@@ -34,19 +41,17 @@ let Card = (props) => {
     } = props.data;
 
     useEffect(() => {
-        let setCardRef = (reference) => {
-            props.onSetCardRef(reference);
+        if (imageId !== "") {
+            ref.push(imageRef.current);
+            setRef(ref);
         }
-
-        if (imageId !== "")
-            setCardRef(imageRef);
     });
 
     let text;
 
     if (historyNote !== '')
         text = <CardText text={ historyNote } />;
-    else if (historyNote !== '')
+    else if (description !== '')
         text = <CardText text={ description } />;
 
     let artistName = artist['name'];
@@ -78,33 +83,35 @@ let Card = (props) => {
         dateText = <CardText designator="Date" text={ date }/>;
 
     return (
-        <div className='card'>
-            <div className='card-header'>
-                <div className='row justify-content-between align-items-center'>
-                    <div className='col'>
-                        <span>{ cardTextTop }</span>
-                    </div>
+        <div className="col mb-4">
+            <div className='card h-100'>
+                <div className='card-header'>
+                    <div className='row justify-content-between align-items-center'>
+                        <div className='col'>
+                            <span>{ cardTextTop }</span>
+                        </div>
 
-                    <div className='col-1 m-0 p-0'>
-                        <span className="text-right oi oi-person">
+                        <div className='col-1 m-0 p-0'>
+                            <span className="text-right oi oi-person">
 
-                        </span>
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <img
-                className='card-img'
-                ref={ imageRef }
-                src={ defaultImageLink }
-                data-src={ urlToImage }
-                alt=""
-            />
+                <img
+                    className='card-img'
+                    ref={ imageRef }
+                    src={ defaultImageLink }
+                    data-src={ urlToImage }
+                    alt=""
+                />
 
-            <div className='card-body'>
-                { text }
-                { dateText }
-                <CardText designator="Place" text={ place } />
+                <div className='card-body'>
+                    { text }
+                    { dateText }
+                    <CardText designator="Place" text={ place } />
+                </div>
             </div>
         </div>
     );
