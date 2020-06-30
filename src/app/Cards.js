@@ -97,6 +97,9 @@ let Cards = (props) => {
                 return -1;
             else if (firstDate[2] < secondDate[2])
                 return -1;
+
+            //Returns zero, if surnames and names are equal
+            return 0;
         });
     }
     else if (dateSetting === "descending") {
@@ -118,6 +121,9 @@ let Cards = (props) => {
                 return 1;
             else if (firstDate[2] < secondDate[2])
                 return 1;
+
+            //Returns zero, if surnames and names are equal
+            return 0;
         });
     }
 
@@ -150,7 +156,7 @@ let Cards = (props) => {
     });
 
     return (
-        <div className="row row-cols-1 row-cols-md-3">
+        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3">
             { cards }
         </div>
     );

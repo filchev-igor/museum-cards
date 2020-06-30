@@ -46,13 +46,18 @@ let SettingsList = () => {
                     clickFunction(value);
             }
 
+            let columnClassName = "col";
+
+            if (index === 2)
+                columnClassName += " mt-sm-3 mt-md-0";
+
             let buttonClassName = "btn btn-light border rounded-0 text-primary w-100";
 
             if (currentValue === value)
                 buttonClassName += " active";
 
             return (
-                <div className="col" key={index}>
+                <div className={columnClassName} key={index}>
                     <button
                         type="button"
                         className={buttonClassName}
@@ -64,10 +69,11 @@ let SettingsList = () => {
             );
         });
 
-        let divClassName = "row row-cols-1 row-cols-md-4 mb-3";
-
-        return <div className={ divClassName } key={ objectIndex }>
-            <div className="col">{ object['option'] }</div>
+        return <div
+            className="row row-cols-1 row-cols-sm-3 row-cols-md-4
+            mb-3 justify-content-sm-center justify-content-md-start"
+            key={ objectIndex }>
+            <div className="col col-md-3">{ object['option'] }</div>
 
             { valuesRowLayout }
         </div>;

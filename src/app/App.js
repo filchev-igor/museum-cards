@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Cards from "./Cards";
 import SettingsWindow from "./settings-window";
 import "./App.css";
@@ -8,12 +8,22 @@ import {
 
 let App = () => {
     const [data, setData] = useState([]);
+
     const [ref, setRef] = useState([]);
+
     const [authorSetting, setAuthorSetting] = useState(null);
     const [dateSetting, setDateSetting] = useState(null);
     const [hideSetting, setHideSetting] = useState(null);
 
+    const [dataProperties, setDataProperties] = useState({
+        collapsed: true,
+        buttonText: "Open settings window ",
+        windowHeight: 0
+    });
+
     const defaultImageLink = 'https://js.cx/lazyimg/1.gif';
+
+    const collapseRef = useRef(null);
 
     useEffect(() => {
         let data = async () => {
@@ -150,7 +160,12 @@ let App = () => {
     return (
         <div className="container">
             <SettingsProvider>
-                <SettingsWindow />
+                <SettingsWindow
+                    dataProperties={dataProperties}
+                    setDataProperties={setDataProperties}
+                    collapseRef={collapseRef}
+                    data={ data }
+                />
             </SettingsProvider>
 
             <CardsProvider>

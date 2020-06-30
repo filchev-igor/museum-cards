@@ -80,12 +80,12 @@ let Card = (props) => {
         <div className="col mb-4">
             <div className='card h-100'>
                 <div className='card-header'>
-                    <div className='row justify-content-between align-items-center'>
+                    <div className='row'>
                         <div className='col'>
                             <span>{ cardTextTop }</span>
                         </div>
 
-                        <div className='col-2'>
+                        <div className='col-2 p-0'>
                             <PersonIcon />
                         </div>
                     </div>
