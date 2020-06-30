@@ -23,7 +23,7 @@ let App = () => {
 
     const defaultImageLink = 'https://js.cx/lazyimg/1.gif';
 
-    const collapseRef = useRef(null);
+    const collapseBlockRef = useRef(null);
 
     useEffect(() => {
         let data = async () => {
@@ -163,7 +163,7 @@ let App = () => {
                 <SettingsWindow
                     dataProperties={dataProperties}
                     setDataProperties={setDataProperties}
-                    collapseRef={collapseRef}
+                    collapseBlockRef={collapseBlockRef}
                     data={ data }
                 />
             </SettingsProvider>

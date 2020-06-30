@@ -71,11 +71,6 @@ let Card = (props) => {
 
     urlToImage = `${urlToImage}/${directory}/${imageId}.jpg`;
 
-    let dateText;
-
-    if (date)
-        dateText = <CardText designator="Date" text={ date }/>;
-
     return (
         <div className="col mb-4">
             <div className='card h-100'>
@@ -101,7 +96,11 @@ let Card = (props) => {
 
                 <div className='card-body'>
                     { text }
-                    { dateText }
+
+                    {date &&
+                        <CardText designator="Date" text={ date } />
+                    }
+
                     <CardText designator="Place" text={ place } />
                 </div>
             </div>

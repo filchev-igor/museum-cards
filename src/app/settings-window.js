@@ -10,12 +10,13 @@ let SettingsWindow = (props) => {
 
     const displayedCardsRef = useRef(null);
     const collapseSettingsButtonRef = useRef(null);
+    const collapseBlockContainerRef = useRef(null);
 
     const {
         data,
         dataProperties,
         setDataProperties,
-        collapseRef
+        collapseBlockRef
     } = props;
 
     const {
@@ -25,17 +26,17 @@ let SettingsWindow = (props) => {
     } = dataProperties;
 
     let toggleCollapsed = () => {
-        const blockHeight = collapseRef.current.scrollHeight + 'px';
+        collapseBlockContainerRef.current.classList.toggle('mb-4');
 
         let sectionHeight = 0;
 
         if (collapsed)
-            sectionHeight = blockHeight;
+            sectionHeight = collapseBlockRef.current.scrollHeight + 'px';
 
-        collapseRef.current.style.height = sectionHeight;
+        collapseBlockRef.current.style.height = sectionHeight;
 
         let transitionEndFunc = () => {
-            collapseRef.current.removeEventListener('transitionend', transitionEndFunc);
+            collapseBlockRef.current.removeEventListener('transitionend', transitionEndFunc);
 
             let text;
 
@@ -53,7 +54,7 @@ let SettingsWindow = (props) => {
             setDataProperties(object);
         }
 
-        collapseRef.current.addEventListener('transitionend', transitionEndFunc);
+        collapseBlockRef.current.addEventListener('transitionend', transitionEndFunc);
     };
 
     const cardsNumber = Object.values(data).filter(cardData => {
@@ -84,9 +85,9 @@ let SettingsWindow = (props) => {
     useEffect(() => {
         let resizeElementHeight = () => {
             if (!collapsed) {
-                collapseRef.current.style.height = 'auto';
+                collapseBlockRef.current.style.height = 'auto';
 
-                collapseRef.current.style.height = collapseRef.current.scrollHeight + 'px';
+                collapseBlockRef.current.style.height = collapseBlockRef.current.scrollHeight + 'px';
             }
         };
 
@@ -109,6 +110,8 @@ let SettingsWindow = (props) => {
             }
         }
 
+        buttonsGridExtraSmall();
+
         window.addEventListener('resize', buttonsGridExtraSmall);
 
         return () => window.removeEventListener('resize', buttonsGridExtraSmall);
@@ -128,7 +131,7 @@ let SettingsWindow = (props) => {
                 <button
                     type="button"
                     ref={collapseSettingsButtonRef}
-                    className="btn btn-light border rounded-0 text-primary float-right"
+                    className={"btn btn-light border rounded-0 text-primary float-right " + (!collapsed ? ' active' : '')}
                     onClick={ toggleCollapsed }
                 >
                     {buttonText}
@@ -138,8 +141,8 @@ let SettingsWindow = (props) => {
             </div>
         </div>
 
-        <div className="row mb-4">
-            <div ref={ collapseRef } className="col collapsing" style={{ height: windowHeight}}>
+        <div ref={collapseBlockContainerRef} className={"row " + (!collapsed ? 'mb-4' : '')}>
+            <div ref={ collapseBlockRef } className="col collapsing" style={{ height: windowHeight}}>
                 <div className="card card-body">
                     <SettingsList />
 

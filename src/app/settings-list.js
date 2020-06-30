@@ -73,7 +73,7 @@ let SettingsList = () => {
             className="row row-cols-1 row-cols-sm-3 row-cols-md-4
             mb-3 justify-content-sm-center justify-content-md-start"
             key={ objectIndex }>
-            <div className="col col-md-3">{ object['option'] }</div>
+            <div className="col col-md-3 text-center text-sm-left">{ object['option'] }</div>
 
             { valuesRowLayout }
         </div>;
