@@ -1,12 +1,13 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import SettingsList from "./settings-list";
+import SettingsList from "./settingsList";
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import Tooltip from '@material-ui/core/Tooltip';
-import {HideSettingContext} from "./settings-contexts";
 import SettingsIcon from '@material-ui/icons/Settings';
+import {HideSettingContext} from "./settingsContext";
+import "./settingsWindow.css";
 
-let SettingsWindow = (props) => {
-    const {hideSetting} = useContext(HideSettingContext);
+let SettingsWindow = props => {
+    const {hide} = useContext(HideSettingContext);
 
     const displayedCardsRef = useRef(null);
     const collapseSettingsButtonRef = useRef(null);
@@ -14,16 +15,14 @@ let SettingsWindow = (props) => {
 
     const {
         data,
-        dataProperties,
+        dataProperties: {
+            collapsed,
+            buttonText,
+            windowHeight
+        },
         setDataProperties,
         collapseBlockRef
     } = props;
-
-    const {
-        collapsed,
-        buttonText,
-        windowHeight
-    } = dataProperties;
 
     let toggleCollapsed = () => {
         collapseBlockContainerRef.current.classList.toggle('mb-4');
@@ -41,9 +40,9 @@ let SettingsWindow = (props) => {
             let text;
 
             if (!collapsed)
-                text = "Open settings window ";
+                text = "Open settings window";
             else
-                text = "Hide settings window ";
+                text = "Hide settings window";
 
             const object = {
                 collapsed: !collapsed,
@@ -57,7 +56,7 @@ let SettingsWindow = (props) => {
         collapseBlockRef.current.addEventListener('transitionend', transitionEndFunc);
     };
 
-    const cardsNumber = Object.values(data).filter(cardData => {
+    const cardsNumber = data.filter(cardData => {
         const {
             artist,
             date,
@@ -65,16 +64,16 @@ let SettingsWindow = (props) => {
             historyNote
         } = cardData;
 
-        if (hideSetting === "description") {
+        if (hide === "description") {
             if (historyNote === '' || description === '') {
                 return false;
             }
         }
-        else if (hideSetting === "date") {
+        else if (hide === "date") {
             if (!date)
                 return false;
         }
-        else if (hideSetting === "authors name") {
+        else if (hide === "authors name") {
             if (typeof artist['name'] === "undefined")
                 return false;
         }
@@ -134,7 +133,7 @@ let SettingsWindow = (props) => {
                     className={"btn btn-light border rounded-0 text-primary float-right " + (!collapsed ? ' active' : '')}
                     onClick={ toggleCollapsed }
                 >
-                    {buttonText}
+                    {buttonText + " "}
 
                     <SettingsIcon />
                 </button>
@@ -142,7 +141,12 @@ let SettingsWindow = (props) => {
         </div>
 
         <div ref={collapseBlockContainerRef} className={"row " + (!collapsed ? 'mb-4' : '')}>
-            <div ref={ collapseBlockRef } className="col collapsing" style={{ height: windowHeight}}>
+            <div
+                ref={ collapseBlockRef }
+                className="col collapsing"
+                style={{height: windowHeight}}
+                data-testid='collapseBlock'
+            >
                 <div className="card card-body">
                     <SettingsList />
 

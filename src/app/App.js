@@ -1,23 +1,22 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Cards from "./Cards";
-import SettingsWindow from "./settings-window";
-import "./App.css";
-import {
-    AuthorSettingContext, DateSettingContext, HideSettingContext, CardRefContext, DefaultImageLinkContext
-} from "./settings-contexts";
+import SettingsWindow from "./settingsWindow";
+import {SettingsProvider} from "./settingsContext";
+import {CardsProvider} from "./cardsContext";
 
 let App = () => {
     const [data, setData] = useState([]);
 
     const [ref, setRef] = useState([]);
 
-    const [authorSetting, setAuthorSetting] = useState(null);
-    const [dateSetting, setDateSetting] = useState(null);
-    const [hideSetting, setHideSetting] = useState(null);
+    //Parameters, which are used to setup the cards display modes
+    const [author, setAuthor] = useState(null);
+    const [date, setDate] = useState(null);
+    const [hide, setHide] = useState(null);
 
     const [dataProperties, setDataProperties] = useState({
         collapsed: true,
-        buttonText: "Open settings window ",
+        buttonText: "Open settings window",
         windowHeight: 0
     });
 
@@ -96,10 +95,8 @@ let App = () => {
 
     useEffect(() => {
         let lazyLoad = () => {
-            let reference = ref;
-
-            for (let i = 0; i < reference.length; i++) {
-                let img = reference[i];
+            for (let i = 0; i < ref.length; i++) {
+                let img = ref[i];
 
                 let imgTop = img.getBoundingClientRect().top;
                 let imgBottom = img.getBoundingClientRect().bottom;
@@ -110,22 +107,25 @@ let App = () => {
                 if ((pageYOffset < pageYOffset + imgTop && pageYOffset + imgTop < pageYOffset + windowHeight)
                     || (pageYOffset < pageYOffset + imgBottom && pageYOffset + imgBottom < pageYOffset + windowHeight)) {
                     img.src = img.dataset.src;
+                    delete img.dataset.src;
 
-                    reference.splice(i, 1);
+                    ref.splice(i, 1);
 
                     i--;
                 }
             }
 
-            setRef(reference);
+            setRef(ref);
 
-            if (!reference.length) {
+            if (!ref.length) {
                 window.removeEventListener("scroll", lazyLoad);
                 window.removeEventListener("resize", lazyLoad);
             }
         };
 
-        lazyLoad();
+        if (data.length)
+            lazyLoad();
+
         window.addEventListener("scroll", lazyLoad);
         window.addEventListener("resize", lazyLoad);
 
@@ -133,47 +133,36 @@ let App = () => {
             window.removeEventListener("scroll", lazyLoad);
             window.removeEventListener("resize", lazyLoad);
         };
-    });
-
-    const SettingsProvider = (props) => {
-        return <>
-            <AuthorSettingContext.Provider value={{authorSetting, setAuthorSetting}}>
-                <DateSettingContext.Provider value={{dateSetting, setDateSetting}}>
-                    <HideSettingContext.Provider value={{hideSetting, setHideSetting}}>
-                        { props.children }
-                    </HideSettingContext.Provider>
-                </DateSettingContext.Provider>
-            </AuthorSettingContext.Provider>
-        </>
-    };
-
-    const CardsProvider = (props) => {
-        return <>
-            <CardRefContext.Provider value={{ref, setRef}}>
-                <DefaultImageLinkContext.Provider value={defaultImageLink}>
-                    { props.children }
-                </DefaultImageLinkContext.Provider>
-            </CardRefContext.Provider>
-        </>
-    };
+    }, [data, ref, author, date, hide]);
 
     return (
         <div className="container">
-            <SettingsProvider>
+            <SettingsProvider
+                author={author}
+                setAuthor={setAuthor}
+                date={date}
+                setDate={setDate}
+                hide={hide}
+                setHide={setHide}
+            >
                 <SettingsWindow
                     dataProperties={dataProperties}
                     setDataProperties={setDataProperties}
                     collapseBlockRef={collapseBlockRef}
-                    data={ data }
+                    data={data}
                 />
             </SettingsProvider>
 
-            <CardsProvider>
+            <CardsProvider
+                reference={ref}
+                setRef={setRef}
+                defaultImageLink={defaultImageLink}
+            >
                 <Cards
-                    authorSetting={authorSetting}
-                    dateSetting={dateSetting}
-                    hideSetting={hideSetting}
-                    data={ data }
+                    author={author}
+                    date={date}
+                    hide={hide}
+                    data={[...data]}
                 />
             </CardsProvider>
         </div>

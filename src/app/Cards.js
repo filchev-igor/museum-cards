@@ -3,16 +3,14 @@ import Card from "./Card";
 
 let Cards = (props) => {
     const {
-        authorSetting,
-        dateSetting,
-        hideSetting,
+        author : authorSetting,
+        date : dateSetting,
+        hide : hideSetting,
         data
     } = props;
 
-    let dataArray = Object.values(data);
-
     if (authorSetting === "ascending") {
-        dataArray.sort((a, b) => {
+        data.sort((a, b) => {
             let firstArtist = a['artist']['name'];
             let secondArtist = b['artist']['name'];
 
@@ -45,7 +43,7 @@ let Cards = (props) => {
         });
     }
     else if (authorSetting === "descending") {
-        dataArray.sort((a, b) => {
+        data.sort((a, b) => {
             let firstArtist = a['artist']['name'];
             let secondArtist = b['artist']['name'];
 
@@ -79,7 +77,7 @@ let Cards = (props) => {
     }
 
     if (dateSetting === "ascending") {
-        dataArray.sort((a, b) => {
+        data.sort((a, b) => {
             let firstDate = a['date'];
             let secondDate = b['date'];
 
@@ -103,7 +101,7 @@ let Cards = (props) => {
         });
     }
     else if (dateSetting === "descending") {
-        dataArray.sort((a, b) => {
+        data.sort((a, b) => {
             let firstDate = a['date'];
             let secondDate = b['date'];
 
@@ -127,12 +125,15 @@ let Cards = (props) => {
         });
     }
 
-    const cards = dataArray.map(cardData => {
+    const cards = data.map(cardData => {
         const {
-            artist,
+            artist: {
+                name : artistName
+            },
             date,
             description,
-            historyNote
+            historyNote,
+            imageId
         } = cardData;
 
         if (hideSetting === "description") {
@@ -145,12 +146,12 @@ let Cards = (props) => {
                 return null;
         }
         else if (hideSetting === "authors name") {
-            if (typeof artist['name'] === "undefined")
+            if (typeof artistName === "undefined")
                 return null;
         }
 
         return <Card
-            key={cardData['imageId']}
+            key={imageId}
             data={cardData}
         />
     });

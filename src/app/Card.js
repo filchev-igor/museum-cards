@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {CardRefContext, DefaultImageLinkContext} from "./settings-contexts";
+import {CardRefContext, DefaultImageLinkContext} from "./cardsContext";
 import PersonIcon from '@material-ui/icons/Person';
 
-let CardText = (props) => {
+let CardText = props => {
     let {
         designator,
         text
@@ -13,22 +13,24 @@ let CardText = (props) => {
     else
         designator = "";
 
-    return (
-        <>
-            <span className='card-text'>{ designator }{ text }</span>
-            <br/>
-        </>
-    )
+    return <>
+        <span className='card-text'>{ designator }{ text }</span>
+        <br/>
+        </>;
 };
 
-let Card = (props) => {
-    const {ref, setRef} = useContext(CardRefContext);
+let Card = props => {
+    const {reference : ref, setRef} = useContext(CardRefContext);
     const defaultImageLink = useContext(DefaultImageLinkContext);
 
     const imageRef = useRef(null);
 
     const {
-        artist,
+        artist : {
+            birth_date : artistBirthDate,
+            death_date : artistDeathDate,
+            name : artistName
+        },
         date,
         description,
         historyNote,
@@ -37,11 +39,10 @@ let Card = (props) => {
     } = props.data;
 
     useEffect(() => {
-        if (imageId !== "") {
-            ref.push(imageRef.current);
-            setRef(ref);
-        }
-    });
+        ref.push(imageRef.current);
+
+        setRef(ref);
+    }, [ref, setRef]);
 
     let text;
 
@@ -50,13 +51,10 @@ let Card = (props) => {
     else if (description !== '')
         text = <CardText text={ description } />;
 
-    let cardTextTop = artist['name'];
+    let cardTextTop = artistName;
 
-    if (typeof artist['name'] === "undefined")
+    if (typeof artistName === "undefined")
         cardTextTop = 'Unknown artist';
-
-    let artistBirthDate = artist['birth_date'];
-    let artistDeathDate = artist['death_date'];
 
     if (artistBirthDate !== '' && artistBirthDate !== undefined)
         cardTextTop += ` (${artistBirthDate}`;
@@ -67,9 +65,9 @@ let Card = (props) => {
         cardTextTop += ")";
 
     let directory = imageId.slice(0, 6);
-    let urlToImage = 'http://media.vam.ac.uk/media/thira/collection_images';
+    let imageUrl = 'http://media.vam.ac.uk/media/thira/collection_images';
 
-    urlToImage = `${urlToImage}/${directory}/${imageId}.jpg`;
+    imageUrl = `${imageUrl}/${directory}/${imageId}.jpg`;
 
     return (
         <div className="col mb-4">
@@ -90,7 +88,7 @@ let Card = (props) => {
                     className='card-img'
                     ref={ imageRef }
                     src={ defaultImageLink }
-                    data-src={ urlToImage }
+                    data-src={ imageUrl }
                     alt=""
                 />
 

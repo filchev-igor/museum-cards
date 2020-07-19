@@ -1,44 +1,49 @@
 import React, {useContext} from "react";
-import {AuthorSettingContext, DateSettingContext, HideSettingContext} from "./settings-contexts";
+import {AuthorSettingContext, DateSettingContext, HideSettingContext} from "./settingsContext";
 
 let SettingsList = () => {
-    const {authorSetting, setAuthorSetting} = useContext(AuthorSettingContext);
-    const {dateSetting, setDateSetting} = useContext(DateSettingContext);
-    const {hideSetting, setHideSetting} = useContext(HideSettingContext);
+    const {author, setAuthor} = useContext(AuthorSettingContext);
+    const {date, setDate} = useContext(DateSettingContext);
+    const {hide, setHide} = useContext(HideSettingContext);
 
     let settingsOptions = [
         {
             option: "Sort by author name",
             value: {
                 list: ["ascending", "descending"],
-                current: authorSetting
+                current: author
             },
-            clickFunction: setAuthorSetting
+            clickFunction: setAuthor
         },
         {
             option: "Sort by date",
             value: {
                 list: ["ascending", "descending"],
-                current: dateSetting
+                current: date
             },
-            clickFunction: setDateSetting
+            clickFunction: setDate
         },
         {
             option: "Hide cards without",
             value: {
                 list: ["description", "date", "authors name"],
-                current: hideSetting
+                current: hide
             },
-            clickFunction: setHideSetting
+            clickFunction: setHide
         }
     ];
 
     return settingsOptions.map((object, objectIndex, array) => {
-        const valuesList = object['value']['list'];
-        const currentValue = object['value']['current'];
+        const {
+            option,
+            value : {
+                list : valuesList,
+                current : currentValue
+            },
+            clickFunction
+        } = object;
 
         const valuesRowLayout = valuesList.map((value, index) => {
-            let clickFunction = object['clickFunction'];
             let clickHandler = () => {
                 if (currentValue === value)
                     clickFunction(null);
@@ -73,7 +78,7 @@ let SettingsList = () => {
             className="row row-cols-1 row-cols-sm-3 row-cols-md-4
             mb-3 justify-content-sm-center justify-content-md-start"
             key={ objectIndex }>
-            <div className="col col-md-3 text-center text-sm-left">{ object['option'] }</div>
+            <div className="col col-md-3 text-center text-sm-left">{option}</div>
 
             { valuesRowLayout }
         </div>;
