@@ -117,7 +117,7 @@ let SettingsWindow = props => {
     });
 
     return <>
-        <div className="row my-4 row-cols-1 row-cols-sm-2">
+        <div className="row my-4 row-cols-1 row-cols-sm-2 d-print-none">
             <div className="col">
                 <div
                     ref={displayedCardsRef}

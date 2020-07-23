@@ -5,7 +5,8 @@ import PersonIcon from '@material-ui/icons/Person';
 let CardText = props => {
     let {
         designator,
-        text
+        text,
+        testid
     } = props;
 
     if (designator !== undefined)
@@ -14,7 +15,7 @@ let CardText = props => {
         designator = "";
 
     return <>
-        <span className='card-text'>{ designator }{ text }</span>
+        <span data-testid={testid} className='card-text'>{ designator }{ text }</span>
         <br/>
         </>;
 };
@@ -47,9 +48,9 @@ let Card = props => {
     let text;
 
     if (historyNote !== '')
-        text = <CardText text={ historyNote } />;
+        text = <CardText text={ historyNote } testid='historyNote' />;
     else if (description !== '')
-        text = <CardText text={ description } />;
+        text = <CardText text={ description } testid='description' />;
 
     let cardTextTop = artistName;
 
@@ -75,7 +76,7 @@ let Card = props => {
                 <div className='card-header'>
                     <div className='row'>
                         <div className='col'>
-                            <span>{ cardTextTop }</span>
+                            <span data-testid='Card authors name and lifespan'>{cardTextTop}</span>
                         </div>
 
                         <div className='col-2 p-0'>
@@ -86,20 +87,20 @@ let Card = props => {
 
                 <img
                     className='card-img'
-                    ref={ imageRef }
-                    src={ defaultImageLink }
-                    data-src={ imageUrl }
-                    alt=""
+                    ref={imageRef}
+                    src={defaultImageLink}
+                    data-src={imageUrl}
+                    alt="If you see this sentence, try to reload page"
                 />
 
                 <div className='card-body'>
-                    { text }
+                    {text}
 
                     {date &&
-                        <CardText designator="Date" text={ date } />
+                        <CardText designator="Date" text={date} testid='date'/>
                     }
 
-                    <CardText designator="Place" text={ place } />
+                    <CardText designator="Place" text={place} testid='place'/>
                 </div>
             </div>
         </div>
