@@ -1,5 +1,6 @@
 import React from 'react';
 import Card from "./Card";
+import {generateUniqueID} from "web-vitals/dist/modules/lib/generateUniqueID";
 
 let Cards = (props) => {
     const {
@@ -126,14 +127,15 @@ let Cards = (props) => {
     }
 
     const cards = data.map(cardData => {
+        const id = generateUniqueID();
+
         const {
             artist: {
                 name : artistName
             },
             date,
             description,
-            historyNote,
-            imageId
+            historyNote
         } = cardData;
 
         if (hideSetting === "description") {
@@ -150,10 +152,7 @@ let Cards = (props) => {
                 return null;
         }
 
-        return <Card
-            key={imageId}
-            data={cardData}
-        />
+        return <Card key={id} data={cardData}/>
     });
 
     return (

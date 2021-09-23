@@ -1,62 +1,74 @@
 export const fetchData = async () => {
-    let url = 'https://www.vam.ac.uk/api/json/museumobject/search?';
-    let object = 'objectnamesearch=Photograph';
-    let place = 'placesearch=China';
-    let images = 'images=1';
+    const path = "https://api.vam.ac.uk/v2/objects/search";
+    const query = {
+        q_object_name: "Photograph",
+        q_place_name: "China",
+        min_length: 2,
+        max_length: 16,
+        images_exist: false,
+        order_sort: "asc",
+        page: 2,
+        page_size: 1, //till 100
+        cluster_size: 20,
+        images: true,
+        random: false
+    };
 
-    url = `${url}&${object}&${place}&${images}`;
+    const fullQuery = Object.entries(query)
+        .map(([key, value]) => `${key}=${value}`)
+        .reduce((previousValue, currentValue) => `${previousValue}&${currentValue}`);
 
-    let response = await fetch(url);
+    const url = `${path}?${fullQuery}`;
+
+    const response = await fetch(url);
 
     if (response.ok)
         return await response.json();
 }
 
 export const fetchFullData = async (inputData) => {
-    let museumData = [];
+    const array = [];
 
-    let records = inputData['records'];
+    const systemNumbers = inputData['records']
+        .map(value => value['systemNumber']);
 
-    for (let key of records) {
-        let museumNumber = key['fields']['object_number'];
+    for (const value of systemNumbers) {
+        const url = `https://api.vam.ac.uk/v2/object/${value}?response_format=json`;
 
-        let url = 'https://www.vam.ac.uk/api/json/museumobject';
+        const response = await fetch(url);
 
-        url = `${url}/${museumNumber}`;
+        if (response.ok) {
+            const responseObject = await response.json();
 
-        let response = await fetch(url);
+            const record = responseObject['record'];
 
-        let museumObject;
+            const obj = {
+                artist: {
+                    name: record['artistMakerPerson'][0]['name']['text'],
+                    profession: record['artistMakerPerson'][0]['association']['text']
+                },
+                description: {
+                    summary: record['summaryDescription'],
+                    brief: record['briefDescription']
+                },
+                object: {
+                    materialsAndTechniques: record['materialsAndTechniques'],
+                    physicalDescription: record['physicalDescription'],
+                    type: record['objectType'],
+                    productionDates: {
+                        approximate: record['productionDates'][0]['date']['text'],
+                        earliest: record['productionDates'][0]['date']['earliest'],
+                        latest: record['productionDates'][0]['date']['latest']
+                    },
+                    history: record['objectHistory'],
+                    placeOrigin: record['placesOfOrigin'][0]['place']['text'],
+                },
+                imageId: responseObject['meta']['images']['_images_meta'][0]['assetRef']
+            };
 
-        if (response.ok)
-            museumObject = await response.json();
-
-        museumObject = museumObject[0]['fields'];
-
-        let artistData;
-
-        if (museumObject['names'].length)
-            artistData = museumObject['names'][0]['fields'];
-        else
-            artistData = "";
-
-        let place = museumObject['places'][0]['fields'];
-
-        let object = {
-            artist: {
-                name: artistData['name'],
-                birth_date: artistData['birth_date'],
-                death_date: artistData['death_date']
-            },
-            historyNote: museumObject['history_note'],
-            place: place['name'],
-            date: museumObject['date_start'],
-            description: museumObject['physical_description'],
-            imageId: museumObject['primary_image_id']
-        };
-
-        museumData.push(object);
+            array.push(obj);
+        }
     }
 
-    return museumData;
+    return array;
 };

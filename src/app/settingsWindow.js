@@ -1,12 +1,13 @@
 import React, {useContext, useEffect, useRef} from 'react';
 import SettingsList from "./settingsList";
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import Tooltip from '@material-ui/core/Tooltip';
-import SettingsIcon from '@material-ui/icons/Settings';
+//import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+//import Tooltip from '@material-ui/core/Tooltip';
+//import SettingsIcon from '@material-ui/icons/Settings';
 import {HideSettingContext} from "./settingsContext";
 import "./settingsWindow.css";
 
 let SettingsWindow = props => {
+    /*
     const {hide} = useContext(HideSettingContext);
 
     const displayedCardsRef = useRef(null);
@@ -166,6 +167,10 @@ let SettingsWindow = props => {
             </div>
         </div>
     </>;
+
+     */
+
+    return 23;
 };
 
 export default SettingsWindow;

@@ -2,13 +2,13 @@ import React, {useState, useEffect, useRef} from 'react';
 import Cards from "./Cards";
 import SettingsWindow from "./settingsWindow";
 import {SettingsProvider} from "./settingsContext";
-import {CardsProvider} from "./cardsContext";
+import {CardRefContext, CardsProvider} from "./context";
 import {fetchData, fetchFullData} from "./fetchFunc";
 
 let App = () => {
     const [data, setData] = useState([]);
 
-    const [ref, setRef] = useState([]);
+    const [reference, setReference] = useState([]);
 
     //Parameters, which are used to setup the cards display modes
     const [author, setAuthor] = useState(null);
@@ -21,8 +21,6 @@ let App = () => {
         windowHeight: 0
     });
 
-    const defaultImageLink = 'https://js.cx/lazyimg/1.gif';
-
     const collapseBlockRef = useRef(null);
 
     useEffect(() => {
@@ -33,8 +31,8 @@ let App = () => {
 
     useEffect(() => {
         let lazyLoad = () => {
-            for (let i = 0; i < ref.length; i++) {
-                let img = ref[i];
+            for (let i = 0; i < reference.length; i++) {
+                let img = reference[i];
 
                 let imgTop = img.getBoundingClientRect().top;
                 let imgBottom = img.getBoundingClientRect().bottom;
@@ -47,15 +45,15 @@ let App = () => {
                     img.src = img.dataset.src;
                     delete img.dataset.src;
 
-                    ref.splice(i, 1);
+                    reference.splice(i, 1);
 
                     i--;
                 }
             }
 
-            setRef(ref);
+            setReference(reference);
 
-            if (!ref.length) {
+            if (!reference.length) {
                 window.removeEventListener("scroll", lazyLoad);
                 window.removeEventListener("resize", lazyLoad);
             }
@@ -71,7 +69,7 @@ let App = () => {
             window.removeEventListener("scroll", lazyLoad);
             window.removeEventListener("resize", lazyLoad);
         };
-    }, [data, ref, author, date, hide]);
+    }, [data, reference, author, date, hide]);
 
     return (
         <div className="container">
@@ -91,18 +89,14 @@ let App = () => {
                 />
             </SettingsProvider>
 
-            <CardsProvider
-                reference={ref}
-                setRef={setRef}
-                defaultImageLink={defaultImageLink}
-            >
+            <CardRefContext.Provider value={{reference, setReference}}>
                 <Cards
                     author={author}
                     date={date}
                     hide={hide}
                     data={[...data]}
                 />
-            </CardsProvider>
+            </CardRefContext.Provider>
         </div>
     );
 };

@@ -1,106 +1,91 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {CardRefContext, DefaultImageLinkContext} from "./cardsContext";
-import PersonIcon from '@material-ui/icons/Person';
+import {CardRefContext} from "./context";
+import CardSection from "./cardSection";
+import {Collapse} from "bootstrap/dist/js/bootstrap.esm.min";
 
-let CardText = props => {
-    let {
-        designator,
-        text,
-        testid
-    } = props;
-
-    if (designator !== undefined)
-        designator = `${designator}: `;
-    else
-        designator = "";
-
-    return <>
-        <span data-testid={testid} className='card-text'>{ designator }{ text }</span>
-        <br/>
-        </>;
-};
+const placeholderImageLink = 'https://js.cx/lazyimg/1.gif';
 
 let Card = props => {
-    const {reference : ref, setRef} = useContext(CardRefContext);
-    const defaultImageLink = useContext(DefaultImageLinkContext);
+    const {reference, setReference} = useContext(CardRefContext);
 
     const imageRef = useRef(null);
+    const summaryRef = useRef(null);
 
     const {
-        artist : {
-            birth_date : artistBirthDate,
-            death_date : artistDeathDate,
-            name : artistName
+        artist: {
+            name: artistName,
+            profession : artistProfession
         },
-        date,
-        description,
-        historyNote,
-        imageId,
-        place
+        description: {
+            summary,
+            brief : briefDescription
+        },
+        object: {
+            materialsAndTechniques,
+            physicalDescription,
+            type : objectType,
+            productionDates: {
+                approximate : approximateDate,
+                earliest : earliestDate,
+                latest : latestDate
+            },
+            history : objectHistory,
+            placeOrigin,
+        },
+        imageId
     } = props.data;
 
     useEffect(() => {
-        ref.push(imageRef.current);
+        reference.push(imageRef.current);
 
-        setRef(ref);
-    }, [ref, setRef]);
+        setReference(reference);
 
-    let text;
+        const bsCollapse = new Collapse(summaryRef.current);
+    }, []);
 
-    if (historyNote !== '')
-        text = <CardText text={ historyNote } testid='historyNote' />;
-    else if (description !== '')
-        text = <CardText text={ description } testid='description' />;
-
-    let cardTextTop = artistName;
-
-    if (typeof artistName === "undefined")
-        cardTextTop = 'Unknown artist';
-
-    if (artistBirthDate !== '' && artistBirthDate !== undefined)
-        cardTextTop += ` (${artistBirthDate}`;
-
-    if (artistDeathDate !== '' && artistDeathDate !== undefined)
-        cardTextTop += ` - ${artistDeathDate})`;
-    else if (artistBirthDate !== '' && artistBirthDate !== undefined)
-        cardTextTop += ")";
-
-    let directory = imageId.slice(0, 6);
-    let imageUrl = 'http://media.vam.ac.uk/media/thira/collection_images';
-
-    imageUrl = `${imageUrl}/${directory}/${imageId}.jpg`;
+    const url = `https://framemark.vam.ac.uk/collections/${imageId}/full/full/0/default.jpg`;
 
     return (
         <div className="col mb-4">
-            <div className='card h-100'>
-                <div className='card-header'>
-                    <div className='row'>
-                        <div className='col'>
-                            <span data-testid='Card authors name and lifespan'>{cardTextTop}</span>
-                        </div>
-
-                        <div className='col-2 p-0'>
-                            <PersonIcon />
-                        </div>
-                    </div>
-                </div>
-
+            <div className='card h-100 bg-secondary text-light'>
                 <img
                     className='card-img'
                     ref={imageRef}
-                    src={defaultImageLink}
-                    data-src={imageUrl}
-                    alt="If you see this sentence, try to reload page"
-                />
+                    src={placeholderImageLink}
+                    data-src={url}
+                    alt="Try to reload the page"/>
 
                 <div className='card-body'>
-                    {text}
+                    <div className="row row-cols-2">
+                        <CardSection left="artist" right={`${artistName} (${artistProfession})`}/>
+                        <CardSection left="place of origin" right={placeOrigin}/>
+                        <CardSection left="Date of creation" right={approximateDate} hasBorder={false}/>
+                        <CardSection left="" right={`Probably between ${earliestDate} and ${latestDate}`}/>
 
-                    {date &&
-                        <CardText designator="Date" text={date} testid='date'/>
-                    }
+                        <div className="col-12 text-center">
+                            <a className="btn btn-outline-light"
+                               ref={summaryRef}
+                               data-bs-toggle="collapse"
+                               href="#summary"
+                               role="button"
+                               aria-expanded="false"
+                               aria-controls="summary">
+                                Toggle summary
+                            </a>
+                        </div>
 
-                    <CardText designator="Place" text={place} testid='place'/>
+                        <div className="col-12 collapse" id="summary">{summary}</div>
+
+                        <div className='col-12 text-uppercase py-4 fs-3 text-center mb-2 border-bottom border-1 border-dashed'>
+                            object details
+                        </div>
+
+                        <CardSection left="brief description" right={briefDescription}/>
+                        <CardSection left="history" right={objectHistory}/>
+                        <CardSection left="type" right={objectType}/>
+                        <CardSection left="physical description" right={physicalDescription}/>
+                        <CardSection left="materials and techniques" right={materialsAndTechniques} hasBorder={false}/>
+                    </div>
                 </div>
             </div>
         </div>
