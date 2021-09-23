@@ -1,12 +1,13 @@
-import React, {useContext} from "react";
+import React, {Fragment, useContext} from "react";
 import {AuthorSettingContext, DateSettingContext, HideSettingContext} from "./settingsContext";
+import {generateUniqueID} from "web-vitals/dist/modules/lib/generateUniqueID";
 
 let SettingsList = () => {
     const {author, setAuthor} = useContext(AuthorSettingContext);
     const {date, setDate} = useContext(DateSettingContext);
     const {hide, setHide} = useContext(HideSettingContext);
 
-    let settingsOptions = [
+    const settingsOptions = [
         {
             option: "Sort by author name",
             value: {
@@ -26,14 +27,16 @@ let SettingsList = () => {
         {
             option: "Hide cards without",
             value: {
-                list: ["description", "date", "authors name"],
+                list: ["artist name", "summary", "date", "object history"],
                 current: hide
             },
             clickFunction: setHide
         }
     ];
 
-    return settingsOptions.map((object, objectIndex, array) => {
+    return settingsOptions.map(object => {
+        const key = generateUniqueID();
+
         const {
             option,
             value : {
@@ -44,43 +47,40 @@ let SettingsList = () => {
         } = object;
 
         const valuesRowLayout = valuesList.map((value, index) => {
-            let clickHandler = () => {
+            const columnId = generateUniqueID();
+
+            const clickHandler = () => {
                 if (currentValue === value)
-                    clickFunction(null);
+                    clickFunction('');
                 else
                     clickFunction(value);
-            }
+            };
 
-            let columnClassName = "col";
+            return (<Fragment key={columnId}>
+                {index === 2 &&
+                <div className="col-md-3 d-none d-sm-block">
 
-            if (index === 2)
-                columnClassName += " mt-sm-3 mt-md-0";
+                </div>}
 
-            let buttonClassName = "btn btn-light border rounded-0 text-primary w-100";
-
-            if (currentValue === value)
-                buttonClassName += " active";
-
-            return (
-                <div className={columnClassName} key={index}>
+                <div className='col'>
                     <button
                         type="button"
-                        className={buttonClassName}
+                        className={`btn border rounded-0 w-100 ${currentValue === value ? 'btn-dark' : 'btn-light text-primary'}`}
                         onClick={clickHandler}
                     >
                         {value}
                     </button>
                 </div>
-            );
+            </Fragment>);
         });
 
         return <div
-            className="row row-cols-1 row-cols-sm-3 row-cols-md-4
+            className="row row-cols-1 row-cols-sm-3 gy-3
             mb-3 justify-content-sm-center justify-content-md-start"
-            key={ objectIndex }>
+            key={key}>
             <div className="col col-md-3 text-center text-sm-left">{option}</div>
 
-            { valuesRowLayout }
+            {valuesRowLayout}
         </div>;
     });
 }

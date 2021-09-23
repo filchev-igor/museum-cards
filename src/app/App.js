@@ -2,8 +2,9 @@ import React, {useState, useEffect, useRef} from 'react';
 import Cards from "./Cards";
 import SettingsWindow from "./settingsWindow";
 import {SettingsProvider} from "./settingsContext";
-import {CardRefContext, CardsProvider} from "./context";
+import {CardRefContext} from "./context";
 import {fetchData, fetchFullData} from "./fetchFunc";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 let App = () => {
     const [data, setData] = useState([]);
@@ -13,7 +14,7 @@ let App = () => {
     //Parameters, which are used to setup the cards display modes
     const [author, setAuthor] = useState(null);
     const [date, setDate] = useState(null);
-    const [hide, setHide] = useState(null);
+    const [hide, setHide] = useState('');
 
     const [dataProperties, setDataProperties] = useState({
         collapsed: true,
@@ -72,7 +73,7 @@ let App = () => {
     }, [data, reference, author, date, hide]);
 
     return (
-        <div className="container">
+        <div className="container-fluid">
             <SettingsProvider
                 author={author}
                 setAuthor={setAuthor}

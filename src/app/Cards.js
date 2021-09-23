@@ -79,8 +79,8 @@ let Cards = (props) => {
 
     if (dateSetting === "ascending") {
         data.sort((a, b) => {
-            let firstDate = a['date'];
-            let secondDate = b['date'];
+            let firstDate = a['object']['productionDates']['approximate'];
+            let secondDate = b['object']['productionDates']['approximate'];
 
             if (firstDate === null)
                 return -1;
@@ -103,8 +103,8 @@ let Cards = (props) => {
     }
     else if (dateSetting === "descending") {
         data.sort((a, b) => {
-            let firstDate = a['date'];
-            let secondDate = b['date'];
+            let firstDate = a['object']['productionDates']['approximate'];
+            let secondDate = b['object']['productionDates']['approximate'];
 
             if (firstDate === null)
                 return 1;
@@ -126,37 +126,47 @@ let Cards = (props) => {
         });
     }
 
-    const cards = data.map(cardData => {
+    const cards = data.map(value => {
         const id = generateUniqueID();
 
         const {
             artist: {
-                name : artistName
+                name: artistName
             },
-            date,
-            description,
-            historyNote
-        } = cardData;
+            description: {
+                summary
+            },
+            object: {
+                productionDates: {
+                    approximate : approximateDate
+                },
+                history : objectHistory
+            }
+        } = value;
 
-        if (hideSetting === "description") {
-            if (historyNote === '' || description === '') {
-                return null;
+        if (hideSetting === "artist name") {
+            if (!artistName)
+                return false;
+        }
+        else if (hideSetting === "summary") {
+            if (!summary) {
+                return false;
             }
         }
         else if (hideSetting === "date") {
-            if (!date)
-                return null;
+            if (!approximateDate)
+                return false;
         }
-        else if (hideSetting === "authors name") {
-            if (typeof artistName === "undefined")
-                return null;
+        else if (hideSetting === "object history") {
+            if (!objectHistory)
+                return false;
         }
 
-        return <Card key={id} data={cardData}/>
+        return <Card key={id} data={value}/>
     });
 
     return (
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+        <div className="row mt-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
             {cards}
         </div>
     );

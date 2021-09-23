@@ -1,18 +1,15 @@
 import React, {useContext, useEffect, useRef} from 'react';
 import SettingsList from "./settingsList";
-//import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-//import Tooltip from '@material-ui/core/Tooltip';
-//import SettingsIcon from '@material-ui/icons/Settings';
 import {HideSettingContext} from "./settingsContext";
 import "./settingsWindow.css";
+import {Tooltip} from "bootstrap/dist/js/bootstrap.esm.min";
 
 let SettingsWindow = props => {
-    /*
     const {hide} = useContext(HideSettingContext);
 
-    const displayedCardsRef = useRef(null);
-    const collapseSettingsButtonRef = useRef(null);
     const collapseBlockContainerRef = useRef(null);
+
+    const tooltipRef = useRef(null);
 
     const {
         data,
@@ -57,29 +54,41 @@ let SettingsWindow = props => {
         collapseBlockRef.current.addEventListener('transitionend', transitionEndFunc);
     };
 
-    const cardsNumber = data.filter(cardData => {
+    const cardsNumber = data.filter(value => {
         const {
-            artist,
-            date,
-            description,
-            historyNote
-        } = cardData;
+            artist: {
+                name: artistName
+            },
+            description: {
+                summary
+            },
+            object: {
+                productionDates: {
+                    approximate : approximateDate
+                },
+                history : objectHistory
+            }
+        } = value;
 
-        if (hide === "description") {
-            if (historyNote === '' || description === '') {
+        if (hide === "artist name") {
+            if (!artistName)
+                return false;
+        }
+        else if (hide === "summary") {
+            if (!summary) {
                 return false;
             }
         }
         else if (hide === "date") {
-            if (!date)
+            if (!approximateDate)
                 return false;
         }
-        else if (hide === "authors name") {
-            if (typeof artist['name'] === "undefined")
+        else if (hide === "object history") {
+            if (!objectHistory)
                 return false;
         }
 
-        return cardData;
+        return value;
     }).length;
 
     useEffect(() => {
@@ -97,46 +106,31 @@ let SettingsWindow = props => {
     });
 
     useEffect(() => {
-        let buttonsGridExtraSmall = () => {
-            const innerWidth = window.innerWidth;
+        const tooltip = new Tooltip(tooltipRef.current);
 
-            if (innerWidth < 576) {
-                displayedCardsRef.current.classList.add('w-100');
-                collapseSettingsButtonRef.current.classList.add('w-100');
-            }
-            else{
-                displayedCardsRef.current.classList.remove('w-100');
-                collapseSettingsButtonRef.current.classList.remove('w-100');
-            }
-        }
-
-        buttonsGridExtraSmall();
-
-        window.addEventListener('resize', buttonsGridExtraSmall);
-
-        return () => window.removeEventListener('resize', buttonsGridExtraSmall);
-    });
+        return () => tooltip;
+    }, []);
 
     return <>
-        <div className="row my-4 row-cols-1 row-cols-sm-2 d-print-none">
+        <div className="row gap-3 gap-sm-0 my-4 row-cols-1 row-cols-sm-2 d-print-none">
             <div className="col">
                 <div
-                    ref={displayedCardsRef}
-                     className="btn border btn-light rounded-0 text-primary">
+                    className="btn border btn-light rounded-0 text-primary d-grid d-sm-inline-block">
                     You can observe {cardsNumber} cards
                 </div>
             </div>
 
-            <div className="col">
+            <div className="col text-end d-grid d-sm-inline-block">
                 <button
                     type="button"
-                    ref={collapseSettingsButtonRef}
-                    className={"btn btn-light border rounded-0 text-primary float-right " + (!collapsed ? ' active' : '')}
+                    className={`btn btn-light border rounded-0 text-primary float-right ${!collapsed ? 'active' : ''}`}
                     onClick={ toggleCollapsed }
                 >
                     {buttonText + " "}
 
-                    <SettingsIcon />
+                    <i className="bi bi-gear">
+
+                    </i>
                 </button>
             </div>
         </div>
@@ -153,24 +147,23 @@ let SettingsWindow = props => {
 
                     <div className="row row-cols-1 justify-content-center">
                         <div className="col-sm-4 col-md-3">
-                            <Tooltip
-                                title="Click on the active button to reset its value"
-                                arrow={true}
-                            >
-                                <div className="btn btn-dark border rounded-0 w-100">
-                                    <HelpOutlineIcon />
-                                </div>
-                            </Tooltip>
+                            <button
+                                ref={tooltipRef}
+                                type="button"
+                                className="btn btn-dark rounded-0 border w-100"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="Click on the active button to reset its value">
+                                <i className="bi bi-question-circle">
+
+                                </i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </>;
-
-     */
-
-    return 23;
 };
 
 export default SettingsWindow;

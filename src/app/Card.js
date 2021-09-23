@@ -39,8 +39,14 @@ let Card = props => {
         reference.push(imageRef.current);
 
         setReference(reference);
+    }, []);
 
-        const bsCollapse = new Collapse(summaryRef.current);
+    useEffect(() => {
+        if (summary) {
+            const bsCollapse = new Collapse(summaryRef.current);
+
+            return () => bsCollapse;
+        }
     }, []);
 
     const url = `https://framemark.vam.ac.uk/collections/${imageId}/full/full/0/default.jpg`;
@@ -62,6 +68,7 @@ let Card = props => {
                         <CardSection left="Date of creation" right={approximateDate} hasBorder={false}/>
                         <CardSection left="" right={`Probably between ${earliestDate} and ${latestDate}`}/>
 
+                        {summary &&
                         <div className="col-12 text-center">
                             <a className="btn btn-outline-light"
                                ref={summaryRef}
@@ -72,16 +79,18 @@ let Card = props => {
                                aria-controls="summary">
                                 Toggle summary
                             </a>
-                        </div>
+                        </div>}
 
-                        <div className="col-12 collapse" id="summary">{summary}</div>
+                        {summary &&
+                        <div className="col-12 collapse" id="summary">{summary}</div>}
 
                         <div className='col-12 text-uppercase py-4 fs-3 text-center mb-2 border-bottom border-1 border-dashed'>
                             object details
                         </div>
 
                         <CardSection left="brief description" right={briefDescription}/>
-                        <CardSection left="history" right={objectHistory}/>
+                        {objectHistory &&
+                        <CardSection left="history" right={objectHistory}/>}
                         <CardSection left="type" right={objectType}/>
                         <CardSection left="physical description" right={physicalDescription}/>
                         <CardSection left="materials and techniques" right={materialsAndTechniques} hasBorder={false}/>

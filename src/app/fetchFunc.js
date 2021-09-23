@@ -7,8 +7,8 @@ export const fetchData = async () => {
         max_length: 16,
         images_exist: false,
         order_sort: "asc",
-        page: 2,
-        page_size: 1, //till 100
+        page: 1,
+        page_size: 30, //till 100
         cluster_size: 20,
         images: true,
         random: false
